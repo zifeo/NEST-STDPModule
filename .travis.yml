@@ -1,0 +1,40 @@
+language: cpp
+dist: trusty
+compiler:
+  - clang
+  - gcc
+os:
+  - linux
+before_install:
+  - pwd
+  - ls
+  - test -n $CC  && unset CC
+  - test -n $CXX && unset CXX
+  - apt install -y git-all git openmpi-bin openmpi-common build-essential autoconf automake libtool libltdl7-dev libreadline6-dev libncurses5-dev libgsl0-dev python-all-dev python-numpy python-scipy python-matplotlib cython
+  - apt install -y libopenmpi-dev
+  - apt install --fix-missing
+before_script:
+  - ls
+  - cd ~
+  - git clone https://github.com/nest/nest-simulator.git nest
+  - pwd
+  - cd nest
+  - ls
+  - pwd
+  - ./bootstrap.sh
+  - ./configure --with-mpi --prefix=/opt/nest
+  - make -j 4
+  - make install
+  - echo 'export PATH=$PATH:/opt/nest/bin' >> ~/.profile
+  - echo 'export PYTHONPATH=/opt/nest/lib/python2.7/site-packages:$PYTHONPATH' >> ~/.profile
+  - echo 'export PYTHONPATH=/opt/nest/lib64/python2.7/site-packages:$PYTHONPATH' >> ~/.profile
+  - source ~/.profile
+  - git clone https://github.com/zifeo/NEST-STDPModule.git stdpmodule
+  - cd stdpmodule
+  - ./bootstrap.sh
+  - ./configure --with-nest=/opt/nest/bin/nest-config
+  - make -j 4
+  - make install
+script:
+ - pwd
+ - ls
